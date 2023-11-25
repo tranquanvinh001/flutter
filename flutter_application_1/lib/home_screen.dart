@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/db_helper.dart';
+import 'package:flutter/services.dart';
+import '../db_helper.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,10 +21,31 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  List<Map<String, dynamic>> _searchData = [];
+
   @override
   void initState() {
     super.initState();
     _refreshData();
+    _allData = _searchData;
+  }
+
+  void _runFilter(String enteredKeyword) {
+    List<Map<String, dynamic>> results = [];
+    if (enteredKeyword.isEmpty) {
+      _refreshData();
+      results = _allData;
+    } else {
+      results = _allData
+          .where((user) => user['title']
+              .toLowerCase()
+              .contains(enteredKeyword.toLowerCase()))
+          .toList();
+    }
+    setState(() {
+      _refreshData();
+      _searchData = results;
+    });
   }
 
 // Create data
@@ -143,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Color(0xFF3A3A3A),
               size: 30,
             ),
-            const Text("KangHaerin"),
+            const Text("TodoList"),
             SizedBox(
               height: 40,
               width: 40,
@@ -159,56 +181,76 @@ class _HomeScreenState extends State<HomeScreen> {
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : ListView.builder(
-              itemCount: _allData.length,
-              itemBuilder: (context, index) => Card(
-                margin: const EdgeInsets.all(15),
-                child: currentIndex == 0
-                    ? ListTile(
-                        title: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          child: Text(
-                            _allData[index]['title'],
-                            style: const TextStyle(
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                        subtitle: Text(_allData[index]['desc']),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                showBottomSheet(_allData[index]['id']);
-                              },
-                              icon: const Icon(
-                                Icons.edit,
-                                color: Colors.indigo,
+          : Column(
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                TextField(
+                  onChanged: (value) => _runFilter(value),
+                  decoration: const InputDecoration(
+                    labelText: 'Search',
+                    suffixIcon: Icon(Icons.search),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: _allData.length,
+                    itemBuilder: (context, index) => Card(
+                      margin: const EdgeInsets.all(15),
+                      child: currentIndex == 0
+                          ? ListTile(
+                              title: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 5),
+                                child: Text(
+                                  _allData[index]['title'],
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                  ),
+                                ),
                               ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                _deteleData(_allData[index]['id']);
-                              },
-                              icon: const Icon(
-                                Icons.delete,
-                                color: Colors.redAccent,
+                              subtitle: Text(_allData[index]['desc']),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      showBottomSheet(_allData[index]['id']);
+                                    },
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: Colors.indigo,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      _deteleData(_allData[index]['id']);
+                                    },
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.redAccent,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _isClicked = !_isClicked;
-                          });
-                        },
-                        child: _isClicked
-                            ? Image.asset('assets/images/avatar2.jpg')
-                            : Image.asset('assets/images/avatar.jpeg')),
-              ),
+                            )
+                          : GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isClicked = !_isClicked;
+                                });
+                              },
+                              child: _isClicked
+                                  ? Image.asset('assets/images/avatar2.jpg')
+                                  : Image.asset('assets/images/avatar.jpeg')),
+                    ),
+                  ),
+                ),
+              ],
             ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
