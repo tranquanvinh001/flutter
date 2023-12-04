@@ -1,3 +1,6 @@
+import 'package:ecommerce_app/controller/recommended_product_controller.dart';
+import 'package:ecommerce_app/routes/route_helper.dart';
+import 'package:ecommerce_app/utils/app_constants.dart';
 import 'package:ecommerce_app/utils/colors.dart';
 import 'package:ecommerce_app/utils/dimensions.dart';
 import 'package:ecommerce_app/widgets/app_icon.dart';
@@ -7,21 +10,30 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class RecommendedFoodDetail extends StatelessWidget {
-  const RecommendedFoodDetail({super.key});
+  final int pageId;
+
+  const RecommendedFoodDetail({super.key, required this.pageId});
 
   @override
   Widget build(BuildContext context) {
+    var product =
+        Get.find<RecommendedProductController>().recommendedProductList[pageId];
     return Scaffold(
       backgroundColor: Colors.white,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
+            automaticallyImplyLeading: false,
             toolbarHeight: 80,
-            title: const Row(
+            title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                AppIcon(icon: Icons.clear),
-                AppIcon(icon: Icons.shopping_cart_outlined),
+                GestureDetector(
+                    onTap: () {
+                      Get.toNamed(RouteHelper.getInitial());
+                    },
+                    child: const AppIcon(icon: Icons.clear)),
+                const AppIcon(icon: Icons.shopping_cart_outlined),
               ],
             ),
             bottom: PreferredSize(
@@ -35,7 +47,7 @@ class RecommendedFoodDetail extends StatelessWidget {
                         topLeft: Radius.circular(Dimensions.radius20),
                         topRight: Radius.circular(Dimensions.radius20))),
                 child: Center(
-                  child: BigText(size: Dimensions.font26, text: "Banh Mi"),
+                  child: BigText(size: Dimensions.font26, text: product.name!),
                 ),
               ),
             ),
@@ -43,8 +55,8 @@ class RecommendedFoodDetail extends StatelessWidget {
             backgroundColor: AppColors.yelloColor,
             expandedHeight: 300,
             flexibleSpace: FlexibleSpaceBar(
-              background: Image.asset(
-                "assets/images/food1.png",
+              background: Image.network(
+                AppConstants.BASE_URL + AppConstants.UPLOAD_URL + product.img!,
                 width: double.maxFinite,
                 fit: BoxFit.cover,
               ),
@@ -56,9 +68,7 @@ class RecommendedFoodDetail extends StatelessWidget {
               Container(
                 margin: EdgeInsets.only(
                     left: Dimensions.width20, right: Dimensions.width20),
-                child: const ExpandableTextWidget(
-                    text:
-                        "Banh Mi is a Vietnamese dish, with the outside crust being a loaf of toasted bread with crispy skin, soft intestine, and the inside is the filling. Depending on regional culture or personal preferences, people can choose many different bread fillings. However, traditional cake fillings often contain pork sausage, meat, fish, vegetarian food or fruit jam, along with some other side ingredients such as pate, butter, vegetables, chili, ham with eggs and pickles.Banh Mi is a Vietnamese dish, with the outside crust being a loaf of toasted bread with crispy skin, soft intestine, and the inside is the filling. Depending on regional culture or personal preferences, people can choose many different bread fillings. However, traditional cake fillings often contain pork sausage, meat, fish, vegetarian food or fruit jam, along with some other side ingredients such as pate, butter, vegetables, chili, ham with eggs and pickles.Banh Mi is a Vietnamese dish, with the outside crust being a loaf of toasted bread with crispy skin, soft intestine, and the inside is the filling. Depending on regional culture or personal preferences, people can choose many different bread fillings. However, traditional cake fillings often contain pork sausage, meat, fish, vegetarian food or fruit jam, along with some other side ingredients such as pate, butter, vegetables, chili, ham with eggs and pickles."),
+                child: ExpandableTextWidget(text: product.description!),
               )
             ],
           ))
@@ -82,7 +92,7 @@ class RecommendedFoodDetail extends StatelessWidget {
                     backgroundColor: AppColors.mainColor,
                     icon: Icons.remove),
                 BigText(
-                  text: "\$12.88 X 0",
+                  text: "\$ ${product.price} X 0",
                   color: AppColors.mainBlackColor,
                   size: Dimensions.font26,
                 ),
