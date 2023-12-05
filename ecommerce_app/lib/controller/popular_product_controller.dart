@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:ecommerce_app/controller/cart_controller.dart';
 import 'package:ecommerce_app/data/repository/popular_product_repo.dart';
+import 'package:ecommerce_app/models/cart_model.dart';
 import 'package:ecommerce_app/models/products_model.dart';
 import 'package:ecommerce_app/utils/colors.dart';
 import 'package:flutter/material.dart';
@@ -43,16 +44,21 @@ class PopularProductController extends GetxController {
     update();
   }
 
+//
   int checkQuantity(int quantity) {
-    if (quantity < 0) {
+    if ((_intCartItems + quantity < 0)) {
       Get.snackbar(
         "Item count",
         "You can't reduce more!",
         backgroundColor: AppColors.mainColor,
         colorText: Colors.white,
       );
+      if (_intCartItems > 0) {
+        _quantity = -_intCartItems;
+        return _quantity;
+      }
       return 0;
-    } else if (quantity > 20) {
+    } else if ((_intCartItems + quantity > 20)) {
       Get.snackbar(
         "Item count",
         "You can't add more!",
@@ -65,24 +71,36 @@ class PopularProductController extends GetxController {
     }
   }
 
-  void initProduct(CartController cart) {
+  void initProduct(ProductModel product, CartController cart) {
     _quantity = 0;
     _intCartItems = 0;
     _cart = cart;
-    //if exist
-//get from storage _inCartItems=3
+    var exist = false;
+    exist = _cart.existInCart(product);
+
+    print("exist or not$exist");
+    if (exist) {
+      _intCartItems = _cart.getQuantity(product);
+    }
+    print("the quantity in the cart is$_intCartItems");
   }
 
   void addItem(ProductModel product) {
-    if (_quantity > 0) {
-      _cart.addItem(product, _quantity);
-    } else {
-      Get.snackbar(
-        "Item count",
-        "You should at least add an item in the cart!",
-        backgroundColor: AppColors.mainColor,
-        colorText: Colors.white,
-      );
-    }
+    _cart.addItem(product, _quantity);
+    _quantity = 0;
+    _intCartItems = _cart.getQuantity(product);
+    _cart.items.forEach((key, value) {
+      print("The id is${value.id}quantity is ${value.quantity}");
+    });
+
+    update();
+  }
+
+  int get totalItems {
+    return _cart.totalItems;
+  }
+
+  List<CartModel> get getItems {
+    return _cart.getItems;
   }
 }
