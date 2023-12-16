@@ -1,10 +1,13 @@
 import 'package:ecommerce_app/controller/cart_controller.dart';
 import 'package:ecommerce_app/controller/popular_product_controller.dart';
 import 'package:ecommerce_app/controller/recommended_product_controller.dart';
+import 'package:ecommerce_app/pages/auth/sign_in_page.dart';
+import 'package:ecommerce_app/pages/auth/sign_up_page.dart';
 import 'package:ecommerce_app/pages/cart/cart_page.dart';
 import 'package:ecommerce_app/pages/food/popular_food_detail.dart';
 import 'package:ecommerce_app/pages/food/recommended_food_detail.dart';
 import 'package:ecommerce_app/pages/home/food_page_body.dart';
+import 'package:ecommerce_app/pages/home/home_page.dart';
 import 'package:ecommerce_app/pages/home/main_food_page.dart';
 import 'package:ecommerce_app/pages/splash/splash_page.dart';
 import 'package:ecommerce_app/routes/route_helper.dart';
@@ -30,7 +33,7 @@ class MyApp extends StatelessWidget {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
-          //home: SplashScreen().
+          // home: SignInPage(),
           initialRoute: RouteHelper.getSplashPage(),
           getPages: RouteHelper.routes,
         );

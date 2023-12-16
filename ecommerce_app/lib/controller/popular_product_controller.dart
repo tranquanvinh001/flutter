@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class PopularProductController extends GetxController {
-  final PopularProductRepo popularProductRepo;
+  PopularProductRepo popularProductRepo;
   PopularProductController({required this.popularProductRepo});
   List<dynamic> _popularProductList = [];
   List<dynamic> get popularProductList => _popularProductList;

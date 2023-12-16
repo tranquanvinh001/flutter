@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_function_literals_in_foreach_calls
+
 import 'dart:convert';
 
 import 'package:ecommerce_app/models/cart_model.dart';
@@ -17,13 +19,9 @@ class CartRepo {
     var time = DateTime.now().toString();
     cart = [];
 // convert objects
-    for (var element in cartList) {
-      continue;
-    }
-    for (var element in cartList) {
-      element.time = time;
-      continue;
-    }
+    cartList.forEach((element) {
+      return cart.add(jsonEncode(element));
+    });
     sharedPreferences.setStringList(AppConstants.CART_LIST, cart);
     // print(sharedPreferences.getStringList(AppConstants.CART_LIST));
     // getCartList();
@@ -40,16 +38,12 @@ class CartRepo {
     for (var element in carts) {
       cartList.add(CartModel.fromJson(jsonDecode(element)));
     }
-
-    for (var element in carts) {
-      cartList.add(CartModel.fromJson(jsonDecode(element)));
-    }
     return cartList;
   }
 
   List<CartModel> getCartHistoryList() {
     if (sharedPreferences.containsKey(AppConstants.CART_HISTORY_LIST)) {
-      cartHistory = [];
+      // cartHistory = [];
       cartHistory =
           sharedPreferences.getStringList(AppConstants.CART_HISTORY_LIST)!;
     }
@@ -78,5 +72,11 @@ class CartRepo {
   void removeCart() {
     cart = [];
     sharedPreferences.remove(AppConstants.CART_LIST);
+  }
+
+  void clearCartHistory() {
+    removeCart();
+    cartHistory = [];
+    sharedPreferences.remove(AppConstants.CART_HISTORY_LIST);
   }
 }

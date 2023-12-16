@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CartController extends GetxController {
-  final CartRepo cartRepo;
+  CartRepo cartRepo;
   CartController({required this.cartRepo});
 
   Map<int, CartModel> _items = {};
@@ -109,7 +109,7 @@ class CartController extends GetxController {
 
   set setCart(List<CartModel> items) {
     storageItems = items;
-
+    print("length of cart item${storageItems.length}");
     for (int i = 0; i < storageItems.length; i++) {
       _items.putIfAbsent(storageItems[i].product!.id!, () => storageItems[i]);
     }
@@ -125,8 +125,21 @@ class CartController extends GetxController {
     update();
   }
 
-List<CartModel> getCartHistoryList(){
-  return cartRepo.getCartHistoryList();
-}
+  List<CartModel> getCartHistoryList() {
+    return cartRepo.getCartHistoryList();
+  }
 
+  set SetItems(Map<int, CartModel> SetItems) {
+    _items = {};
+    _items = SetItems;
+  }
+
+  void addToCartList() {
+    cartRepo.addToCartList(getItems);
+    update();
+  }
+
+  void clearCartHistory() {
+    cartRepo.clearCartHistory();
+  }
 }
